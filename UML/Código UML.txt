@@ -1,0 +1,70 @@
+@startuml
+    class Pessoa {
+        -String nome
+        -String cpf
+        -LocalDate dataNascimento
+    }
+
+    class Paciente {
+        -LocalDateTime dataHoraChegada
+        -List<String> perguntasTriagem
+        -ClassificacaoRisco classificacao
+    }
+
+    class Medico {
+        -String especialidade
+    }
+
+    class ClassificacaoRisco {
+        -Enum cor (Vermelho, Amarelo, Verde, Azul)
+        -int prioridade
+        -String descricao
+    }
+
+    class Atendimento {
+        -LocalDateTime dataHoraAtendimento
+    }
+
+    class FilaAtendimento {
+        -List<Paciente> pacientesAguardando
+        +inserirPaciente(p: Paciente)
+        +removerPrimeiroPaciente() : Paciente
+        +ordenarFila()
+        +estaVazia() : boolean 
+        +mostrarFila()
+    }
+
+    class Historico {
+        -List<Atendimento> pacientesAtendidos
+        -FilaAtendimento filaAtual
+        +registrarAtendimento(atendimento: Atendimento)
+        +mostrarHistorico() : String
+    }
+
+    class SistemaAtendimento {
+        -FilaAtendimento fila
+        -Historico historico
+        -List<Medico> medicosDisponiveis
+        +realizarTriagem(pontuacao: int) : ClassificacaoRisco
+        +carregarDadosIniciais()
+        +inserirNovoPaciente(paciente: Paciente) : String
+        +inserirNovoMedico(medico: Medico) : String
+        +simularAtendimento() : String
+    } 
+
+    Pessoa <|-- Paciente
+    Pessoa <|-- Medico
+
+    Paciente "1" *-- "1" ClassificacaoRisco
+
+    FilaAtendimento "1" o-- "*" Paciente
+
+    Atendimento "1" -- "1" Paciente
+    Atendimento "1" -- "1" Medico
+
+    Historico "1" *-- "*" Atendimento
+
+    SistemaAtendimento "1" *-- "1" FilaAtendimento
+    SistemaAtendimento "1" *-- "1" Historico
+    SistemaAtendimento "1" o-- "*" Medico
+@enduml
